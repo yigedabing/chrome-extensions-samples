@@ -39,13 +39,35 @@ chrome.storage.onChanged.addListener(({ enabledTlds }) => {
 });
 
 ////////////////////【双向通信】////////////////////////
+chrome.runtime.onMessage.addListener(notify);
 
-// Fired when a message is sent from either an extension process or a content script
-chrome.runtime.onMessage.addListener((message, sender) => {
-  console.log('background.js', message);
-
+/**
+ * @param {{type:string}} message
+ * @param {chrome.runtime.MessageSender} sender
+ */
+function notify(message, sender) {
   // Sends a single message to the content script(s) in the specified tab
   if (sender.tab?.id) {
     chrome.tabs.sendMessage(sender.tab.id, { data: '我已经收到了' });
   }
-});
+
+  const { type, data } = message;
+  switch (type) {
+    case 'switchHostName':
+      console.log('switchHostName', data);
+      break;
+
+    case 'click':
+      chrome.notifications.create({
+        type: 'basic',
+        iconUrl: chrome.runtime.getURL('images/doctor_128.png'),
+        title: 'You clicked a link!',
+        message: data.href,
+      });
+      break;
+
+    default:
+      console.log(message);
+      break;
+  }
+}

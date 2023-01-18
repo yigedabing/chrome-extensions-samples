@@ -3,7 +3,7 @@
   "description": "使用上下文菜单搜索不同国家的谷歌",
   "version": "1.2",
   "manifest_version": 3,
-  "permissions": ["contextMenus", "storage"],
+  "permissions": ["contextMenus", "storage", "notifications"],
   "background": {
     "service_worker": "background.js",
     "type": "module"
